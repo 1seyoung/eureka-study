@@ -1,0 +1,12 @@
+[
+    {
+      "week": "1주차",
+      "links": [
+        "https://school.programmers.co.kr/learn/courses/30/lessons/42748",
+        "https://school.programmers.co.kr/learn/courses/30/lessons/42840",
+        "https://school.programmers.co.kr/learn/courses/30/lessons/42862"
+      ],
+      "description": "1주차 문제입니다. 정렬, 완전탐색, 그리디 알고리즘 문제를 준비했습니다.",
+      "date_added": "2024-02-18"
+    }
+  ]
