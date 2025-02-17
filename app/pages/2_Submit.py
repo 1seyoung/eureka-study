@@ -1,9 +1,10 @@
 import streamlit as st
-from utils.auth import check_login
 from utils.data import save_submission, get_problems
 
 # 로그인 체크
-check_login()
+if 'logged_in' not in st.session_state or not st.session_state.logged_in:
+    st.error("로그인이 필요합니다.")
+    st.stop()
 
 st.title("📝 문제 풀이 제출")
 

@@ -1,10 +1,11 @@
 import streamlit as st
 import pandas as pd
-from utils.auth import check_login
 from utils.data import get_submissions
 
 # 로그인 체크
-check_login()
+if 'logged_in' not in st.session_state or not st.session_state.logged_in:
+    st.error("로그인이 필요합니다.")
+    st.stop()
 
 st.title("📊 제출 현황")
 
