@@ -103,9 +103,15 @@ if submissions:
 
             if not best_solutions.empty:
                 # 문제집 이름을 기준으로 변경
-                best_solutions['문제집'] = best_solutions['set']
-                best_solutions['문제 링크'] = best_solutions['link']
-                best_solutions['베스트 답안'] = best_solutions['best'].apply(lambda x: f'<a href="{x}" target="_blank">{x}</a>')
+                best_solutions = best_solutions.rename(columns={
+                    'set': '문제집',
+                    'task_name': '문제 이름',
+                    'link': '문제 링크',
+                    'best': '베스트 답안'
+                })
+                
+                # 베스트 답안 링크 HTML 변환
+                best_solutions['베스트 답안'] = best_solutions['베스트 답안'].apply(lambda x: f'<a href="{x}" target="_blank">{x}</a>')
                 
                 # 테이블 출력
                 st.write(best_solutions[['문제집', '문제 이름', '문제 링크', '베스트 답안']].to_html(escape=False, index=False), unsafe_allow_html=True)
