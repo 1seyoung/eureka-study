@@ -4,14 +4,23 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from datetime import datetime, timedelta
 from utils.data import get_submissions, get_problems
-import matplotlib.font_manager as fm
 
-# 한글 폰트 적용
+# 한글 폰트 적용 (Streamlit Cloud 환경 대응)
 def set_korean_font():
-    font_path = "/usr/share/fonts/truetype/nanum/NanumGothic.ttf"  # 시스템에 설치된 폰트 경로
-    plt.rc('font', family=fm.FontProperties(fname=font_path).get_name())
+    plt.rcParams["font.family"] = "sans-serif"  # 기본적으로 사용 가능한 폰트
+    plt.rcParams["axes.unicode_minus"] = False  # 마이너스 부호 깨짐 방지
 
 set_korean_font()
+
+# 웹 UI 한글 폰트 적용
+st.markdown("""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');
+    * {
+        font-family: 'Nanum Gothic', sans-serif;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 # 로그인 체크
 if 'logged_in' not in st.session_state or not st.session_state.logged_in:
