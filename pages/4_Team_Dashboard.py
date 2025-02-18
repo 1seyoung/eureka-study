@@ -4,10 +4,11 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from datetime import datetime, timedelta
 from utils.data import get_submissions, get_problems
+import matplotlib.dates as mdates
 
 # 한글 폰트 적용 (Streamlit Cloud 환경 대응)
 def set_korean_font():
-    plt.rcParams["font.family"] = "sans-serif"  # 기본적으로 사용 가능한 폰트
+    plt.rcParams["font.family"] = ["Arial", "Nanum Gothic"]  # Arial을 기본으로, Nanum Gothic 대체 가능
     plt.rcParams["axes.unicode_minus"] = False  # 마이너스 부호 깨짐 방지
 
 set_korean_font()
@@ -64,16 +65,26 @@ if submissions:
 
         # 📊 꺾은선 그래프 (Line Plot)으로 시각화
         fig, ax = plt.subplots(figsize=(12, 6))
-        
+
+        # X축 날짜 포맷 조정
+        ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
+        ax.xaxis.set_major_locator(mdates.DayLocator(interval=7))  # 7일 간격으로 표시
+
+        # 팀원별 선 그래프 그리기
         for member in df['name'].unique():
             member_data = daily_counts[daily_counts['name'] == member]
-            ax.plot(member_data['date'], member_data['count'], marker='o', linestyle='-', label=member)
-        
-        ax.set_title("팀원별 제출 현황", fontsize=14)
+            ax.plot(member_data['date'], member_data['count'], marker='o', linestyle='-', label=member, linewidth=2)
+
+        ax.set_title("팀원별 제출 현황", fontsize=14, fontweight="bold")
         ax.set_xlabel("날짜", fontsize=12)
         ax.set_ylabel("제출 횟수", fontsize=12)
-        ax.legend(title="팀원")
-        ax.grid(True, linestyle='--', alpha=0.6)
+        ax.legend(title="팀원", fontsize=10)
+        ax.yaxis.get_offset_text().set_visible(False)  # 불필요한 소수점 제거
+        ax.tick_params(axis='y', which='both', left=False)  # y축 눈금 숨김
+        ax.xaxis.grid(False)  # X축 격자 숨김
+        ax.yaxis.grid(False)  # Y축 격자 숨김
+        
+        plt.xticks(rotation=45)  # X축 날짜 회전
 
         # 📌 Streamlit에서 출력
         st.pyplot(fig)
