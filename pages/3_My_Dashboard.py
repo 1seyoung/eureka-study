@@ -27,7 +27,7 @@ if submissions:
         st.subheader("📋 전체 문제 제출 현황")
 
         filtered_problems = problems  # 전체 문제 가져오기
-        filtered_submissions = my_submissions  # 전체 제출 데이터 사용
+        filtered_submissions = my_submissions  # 모든 제출 데이터 사용
 
         # 🛠 전체 문제 디버깅
         st.write("📌 전체 문제 리스트:", filtered_problems)
@@ -59,13 +59,16 @@ if submissions:
     st.subheader("🎯 문제 제출 현황")
 
     # 제출된 풀이 매핑
-    submitted_solutions = dict(zip(filtered_submissions['problem_link'], 
-                                   filtered_submissions['solution_link']))
+    submitted_solutions = dict(zip(filtered_submissions['problem_link'].str.strip(), 
+                                   filtered_submissions['solution_link'].str.strip()))
+
+    # 🛠 제출된 풀이 매핑 디버깅
+    st.write("📌 제출된 풀이 매핑:", submitted_solutions)
 
     # 문제 목록 데이터 구성
     table_data = []
     for prob in filtered_problems:
-        prob_link = prob['link']
+        prob_link = prob['link'].strip()  # 링크 정규화
         status = "✅" if prob_link in submitted_solutions else "❌"
 
         table_data.append({
@@ -74,7 +77,7 @@ if submissions:
             "상태": status,
             "문제 링크": f'<a href="{prob_link}" target="_blank">문제 보기</a>',
             "풀이 링크": f'<a href="{submitted_solutions[prob_link]}" target="_blank">풀이 보기</a>' if prob_link in submitted_solutions else "-",
-            "제출일": filtered_submissions[filtered_submissions['problem_link'] == prob_link]['submit_time'].iloc[0] if prob_link in submitted_solutions else "-"
+            "제출일": filtered_submissions[filtered_submissions['problem_link'].str.strip() == prob_link]['submit_time'].iloc[0] if prob_link in submitted_solutions else "-"
         })
 
     # 🛠 최종 테이블 데이터 디버깅
