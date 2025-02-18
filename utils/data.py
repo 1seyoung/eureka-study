@@ -29,14 +29,16 @@ def save_submission(name, problem_set, problem_link, solution_link, group=''):
 
 def get_submissions():
     """제출 현황 가져오기"""
-    values = get_sheet_data('Submissions', 'A2:D')
+    values = get_sheet_data('Submissions', 'A2:F')  # 컬럼 개수 변경
     submissions = []
     for row in values:
-        if len(row) >= 4:
+        if len(row) >= 6:  # 6개 컬럼이 다 있는 경우만 처리
             submissions.append({
-                '이름': row[0],
-                '주차': row[1],
-                '제출링크': row[2],
-                '제출시간': row[3]
+                'name': row[0],           # A열 (이름)
+                'problem_set': row[1],    # B열 (주차)
+                'problem_link': row[2],   # C열 (문제 링크)
+                'solution_link': row[3],  # D열 (풀이 링크)
+                'submit_time': row[4],    # E열 (제출 시간)
+                'group': row[5]           # F열 (그룹)
             })
     return submissions
