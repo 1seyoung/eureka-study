@@ -15,11 +15,12 @@ def get_problems():
             })
     return problems
 
-def save_submission(name, week, solution_link, group):
-    """제출 정보 저장"""
+def save_submission(name, problem_set, problem_link, solution_link, group=''):
+    """Save submission data"""
     values = [
         name,
-        week,
+        problem_set,
+        problem_link,
         solution_link,
         datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         group
