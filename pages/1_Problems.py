@@ -14,7 +14,7 @@ if problems:
     # 문제집 번호로 그룹화
     problem_sets = {}
     for problem in problems:
-        set_num = problem['week']  # ex: "1"
+        set_num = problem['week'].strip()  # 공백 제거
         if set_num not in problem_sets:
             problem_sets[set_num] = {
                 'links': [],
@@ -22,10 +22,10 @@ if problems:
             }
         problem_sets[set_num]['links'].append(problem['links'][0])
     
-    # 문제집 선택 드롭다운
+    # 문제집 선택 드롭다운 (단순 문자열 정렬)
     selected_set = st.selectbox(
         "문제집 선택",
-        options=sorted(problem_sets.keys(), key=lambda x: int(x)),  # 숫자 순으로 정렬
+        options=sorted(problem_sets.keys()),
         format_func=lambda x: f"{x}번째 문제집"
     )
     
@@ -38,6 +38,5 @@ if problems:
             # 링크의 마지막 부분을 문제 번호로 사용
             problem_number = link.split('/')[-1]
             st.markdown(f"{i}. [프로그래머스 {problem_number}번 문제]({link})")
-        
 else:
     st.info("등록된 문제가 없습니다.")
