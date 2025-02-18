@@ -13,9 +13,6 @@ st.title(f"📊 {st.session_state.current_user['name']}님의 제출 현황")
 submissions = get_submissions()
 problems = get_problems()
 
-# 🛠 문제 데이터 디버깅 (문제집 목록 확인)
-st.write("📌 문제 데이터 확인:", problems)
-
 if submissions:
     df = pd.DataFrame(submissions)
     my_submissions = df[df['name'] == st.session_state.current_user['name']]
@@ -26,16 +23,17 @@ if submissions:
     with tab1:  # 전체 문제 보기
         st.subheader("📋 전체 문제 제출 현황")
 
-        filtered_problems = problems  # 전체 문제 가져오기
+        # ✅ 모든 문제 포함 (문제집별 보기와 독립적으로 유지)
+        all_problems = problems  
         filtered_submissions = my_submissions  # 모든 제출 데이터 사용
 
-        # 🛠 전체 문제 디버깅
-        st.write("📌 전체 문제 리스트 (테이블 생성 전):", filtered_problems)
+        # 🛠 디버깅: 전체 문제 리스트 확인
+        st.write("📌 전체 문제 리스트 (테이블 생성 전):", all_problems)
 
     with tab2:  # 문제집별 보기
         st.subheader("📚 문제집별 제출 현황")
 
-        # 문제집 목록 가져오기
+        # ✅ 문제집별 보기에서는 문제 필터링 적용
         problem_sets = sorted(set(str(p['set_number']).strip() for p in problems))
         
         selected_set = st.selectbox(
@@ -44,11 +42,12 @@ if submissions:
             format_func=lambda x: f"{x}번째 문제집"
         )
 
-        # 선택된 문제집에 해당하는 문제 필터링
-        filtered_problems = [p for p in problems if str(p['set_number']).strip() == str(selected_set)]
+        # ✅ 선택한 문제집에 해당하는 문제만 가져오기
+        set_problems = [p for p in problems if str(p['set_number']).strip() == str(selected_set)]
         
-        st.write("📌 필터링된 문제 리스트:", filtered_problems)
+        st.write("📌 선택한 문제집의 문제 리스트:", set_problems)
 
+        # ✅ 해당 문제집의 제출 데이터 필터링
         filtered_submissions = my_submissions[my_submissions['problem_set'] == selected_set]
 
     # 📌 제출된 풀이 매핑 (정리 후)
@@ -56,14 +55,12 @@ if submissions:
                                    filtered_submissions['solution_link'].str.strip()))
     st.write("📌 제출된 풀이 매핑 (정리 후):", submitted_solutions)
 
-    # 문제 목록 데이터 구성
+    # ✅ 테이블 데이터 구성 (탭별로 다르게 반영)
     table_data = []
-    for prob in filtered_problems:
-        prob_link = prob['link'].strip()  # 문제 링크 정리
+    display_problems = all_problems if st.session_state.get("selected_tab") == "전체 문제 보기" else set_problems
 
-        # 🛠 디버깅: 문제 링크 비교
-        st.write(f"📌 검사중: 문제 링크: {prob_link}")
-        st.write("📌 제출된 풀이 매핑 키값들:", list(submitted_solutions.keys()))
+    for prob in display_problems:
+        prob_link = prob['link'].strip()  # 문제 링크 정리
 
         status = "✅" if prob_link in submitted_solutions else "❌"
 
