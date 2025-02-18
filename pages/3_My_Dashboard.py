@@ -17,52 +17,32 @@ if submissions:
     df = pd.DataFrame(submissions)
     my_submissions = df[df['name'] == st.session_state.current_user['name']]
     
-    # 보기 모드 선택 (🖌️ 스타일 추가)
-    with st.container():
-        st.markdown("""
-        <style>
-            .radio-labels {
-                font-size: 18px;
-                font-weight: bold;
-                color: #444;
-            }
-            div[data-testid="stRadio"] label {
-                display: inline-block;
-                padding: 10px 20px;
-                margin: 5px;
-                border-radius: 20px;
-                background-color: #f5f5f5;
-                cursor: pointer;
-                transition: 0.3s;
-            }
-            div[data-testid="stRadio"] label:hover {
-                background-color: #e1e1e1;
-            }
-            div[data-testid="stRadio"] input:checked + label {
-                background-color: #ff4b4b;
-                color: white;
-            }
-        </style>
-        """, unsafe_allow_html=True)
+    # 🏷️ 보기 모드 탭 추가
+    tab1, tab2 = st.tabs(["📋 전체 문제 보기", "📚 문제집별 보기"])
 
-        view_mode = st.radio("📌 보기 모드", ["전체 문제", "특정 문제집"], horizontal=True)
+    with tab1:  # 전체 문제 보기
+        st.subheader("📋 전체 문제 제출 현황")
 
-    # 문제집 목록 가져오기
-    problem_sets = sorted(set(str(p['set_number']).strip() for p in problems))
-
-    if view_mode == "특정 문제집":
-        selected_set = st.selectbox(
-            "📚 문제집 선택",
-            options=problem_sets,
-            format_func=lambda x: f"{x}번째 문제집"
-        )
-        # 선택된 문제집에 해당하는 문제 필터링
-        filtered_problems = [p for p in problems if str(p['set_number']).strip() == selected_set]
-        filtered_submissions = my_submissions[my_submissions['problem_set'] == selected_set]
-    else:
         filtered_problems = problems
         filtered_submissions = my_submissions
 
+    with tab2:  # 문제집별 보기
+        st.subheader("📚 문제집별 제출 현황")
+
+        # 문제집 목록 가져오기
+        problem_sets = sorted(set(str(p['set_number']).strip() for p in problems))
+
+        selected_set = st.selectbox(
+            "📖 문제집 선택",
+            options=problem_sets,
+            format_func=lambda x: f"{x}번째 문제집"
+        )
+
+        # 선택된 문제집에 해당하는 문제 필터링
+        filtered_problems = [p for p in problems if str(p['set_number']).strip() == selected_set]
+        filtered_submissions = my_submissions[my_submissions['problem_set'] == selected_set]
+
+    # 📌 문제 제출 현황 표시
     st.subheader("🎯 문제 제출 현황")
 
     # 제출된 풀이 매핑
