@@ -9,6 +9,14 @@ st.set_page_config(page_title="📊 글로벌 대시보드", layout="wide")
 st.title("🌍 글로벌 대시보드")
 st.subheader("소속별 및 개인별 제출 현황을 비교합니다.")
 
+# 로그인 체크 및 사용자 정보 가져오기
+if 'current_user' not in st.session_state:
+    st.session_state.current_user = {'name': 'Guest', 'group': 'Unknown'}
+
+current_user = st.session_state.current_user
+user_name = current_user.get('name', 'Guest')
+user_group = current_user.get('group', 'Unknown')
+
 # 데이터 로드
 submissions = get_submissions()
 problems = get_problems()
@@ -33,8 +41,6 @@ def display_discussions(discussion_type, key_prefix):
                 st.markdown("---")
     
     # 의견 입력
-    user_name = st.session_state.current_user['name']
-    user_group = st.session_state.current_user['group']
     discussion_input = st.text_area("✍️ 내용을 입력하세요:", key=f"{key_prefix}_input")
     anonymous_option = st.checkbox("익명으로 제출", key=f"{key_prefix}_anonymous")
 
@@ -98,10 +104,12 @@ if submissions:
 
             if not best_solutions.empty:
                 # 베스트 답안 링크 HTML 변환
-                best_solutions['베스트 답안'] = best_solutions['best'].apply(lambda x: f'<a href="{x}" target="_blank">베스트 답안 보기</a>')
+                best_solutions['문제 이름'] = best_solutions['task_name']
+                best_solutions['문제 링크'] = best_solutions['link']
+                best_solutions['베스트 답안'] = best_solutions['best'].apply(lambda x: f'<a href="{x}" target="_blank">{x}</a>')
                 
                 # 테이블 출력
-                st.write(best_solutions[['set_number', 'task_name', 'description', '베스트 답안']].to_html(escape=False, index=False), unsafe_allow_html=True)
+                st.write(best_solutions[['문제 이름', '문제 링크', '베스트 답안']].to_html(escape=False, index=False), unsafe_allow_html=True)
             else:
                 st.info("아직 베스트 답안이 없습니다.")
         else:
