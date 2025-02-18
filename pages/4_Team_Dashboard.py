@@ -29,6 +29,9 @@ if submissions:
     # 현재 사용자의 팀(그룹) 가져오기
     current_group = st.session_state.current_user['group']
     
+    # 현재 사용자의 팀원만 필터링
+    df = df[df['group'] == current_group]
+    
     # 🏷️ 탭 UI 추가
     tab2 = st.tabs(["📖 팀원의 제출 답안 확인"])[0]
 
