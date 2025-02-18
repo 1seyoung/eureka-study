@@ -44,15 +44,26 @@ def display_discussions(discussion_type, key_prefix):
     discussion_input = st.text_area("✍️ 내용을 입력하세요:", key=f"{key_prefix}_input")
     anonymous_option = st.checkbox("익명으로 제출", key=f"{key_prefix}_anonymous")
 
-    # 제출 버튼
-    if st.button("제출", key=f"{key_prefix}_submit"):
-        if discussion_input.strip():
-            anonymous = "yes" if anonymous_option else "no"
-            save_discussion(user_name, user_group, discussion_input, anonymous, discussion_type)
-            st.success("제출되었습니다! 📝")
-            st.experimental_rerun()  # 새로고침하여 반영
-        else:
-            st.warning("내용을 입력하세요.")
+# 제출 버튼
+if st.button("제출", key=f"{key_prefix}_submit"):
+    if discussion_input.strip():
+        anonymous = "yes" if anonymous_option else "no"
+        save_discussion(user_name, user_group, discussion_input, anonymous, discussion_type)
+        
+        # ✅ rerun 대신 상태 업데이트
+        if "discussions" in st.session_state:
+            st.session_state["discussions"].append({
+                'name': "익명" if anonymous == "yes" else user_name,
+                'group': user_group,
+                'comment': discussion_input,
+                'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                'anonymous': anonymous,
+                'type': discussion_type
+            })
+
+        st.success("제출되었습니다! 📝")
+    else:
+        st.warning("내용을 입력하세요.")
 
 if submissions:
     df = pd.DataFrame(submissions)
