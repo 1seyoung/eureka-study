@@ -84,14 +84,25 @@ if submissions:
         if not member_submissions.empty:
             st.markdown(f"### 📝 **{selected_member}님의 제출 목록**")
 
+            # 📌 문제 데이터프레임을 사용해 문제 정보 매칭
+            problems_df = pd.DataFrame(problems)
+
+            # 제출된 문제와 문제 정보 병합
+            merged_df = pd.merge(member_submissions, problems_df, left_on="problem_link", right_on="link", how="left")
+
+            # 📜 테이블 정리
             table_data = []
-            for _, row in member_submissions.iterrows():
+            for _, row in merged_df.iterrows():
                 table_data.append({
-                    "문제": f'<a href="{row["problem_link"]}" target="_blank">문제 보기</a>',
-                    "풀이": f'<a href="{row["solution_link"]}" target="_blank">풀이 보기</a>',
+                    "문제집": f"{row['set_number']}번째",
+                    "문제 이름": row["task_name"],
+                    "설명": row["description"],
+                    "문제 링크": f'<a href="{row["problem_link"]}" target="_blank">문제 보기</a>',
+                    "풀이 링크": f'<a href="{row["solution_link"]}" target="_blank">풀이 보기</a>',
                     "제출일": row["submit_time"]
                 })
 
+            # 🖥️ UI 개선: `st.dataframe()` 대신 HTML 테이블 사용
             table_df = pd.DataFrame(table_data)
             st.write(table_df.to_html(escape=False, index=False), unsafe_allow_html=True)
 
