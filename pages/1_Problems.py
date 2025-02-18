@@ -22,10 +22,11 @@ if problems:
                 'date_added': problem['date_added']
             }
         
-        # 문제 정보 추가 (이름 + 링크)
+        # 문제 정보 추가 (이름 + 링크 + 설명)
         problem_sets[set_name]['problems'].append({
             'name': problem['task_name'],
-            'link': problem['link']
+            'link': problem['link'],
+            'description': problem.get('description', '')  # 문제 설명 추가
         })
     
     # 문제집 선택 드롭다운
@@ -46,6 +47,7 @@ if problems:
         for problem in problem_sets[selected_set]['problems']:
             table_data.append({
                 "문제 이름": problem['name'],
+                "문제 설명": problem['description'],
                 "문제 링크": f'<a href="{problem["link"]}" target="_blank">문제 보기</a>'
             })
 
