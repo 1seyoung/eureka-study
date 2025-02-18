@@ -55,20 +55,15 @@ if submissions:
 
         filtered_submissions = my_submissions[my_submissions['problem_set'] == selected_set]
 
-    # 📌 문제 제출 현황 표시
-    st.subheader("🎯 문제 제출 현황")
-
-    # 제출된 풀이 매핑
+    # 📌 제출된 풀이 매핑 (정리 후)
     submitted_solutions = dict(zip(filtered_submissions['problem_link'].str.strip(), 
                                    filtered_submissions['solution_link'].str.strip()))
-
-    # 🛠 제출된 풀이 매핑 디버깅
-    st.write("📌 제출된 풀이 매핑:", submitted_solutions)
+    st.write("📌 제출된 풀이 매핑 (정리 후):", submitted_solutions)
 
     # 문제 목록 데이터 구성
     table_data = []
     for prob in filtered_problems:
-        prob_link = prob['link'].strip()  # 링크 정규화
+        prob_link = prob['link'].strip()  # 문제 링크 정리
         status = "✅" if prob_link in submitted_solutions else "❌"
 
         table_data.append({
