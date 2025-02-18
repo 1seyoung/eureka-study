@@ -8,7 +8,7 @@ if 'logged_in' not in st.session_state or not st.session_state.logged_in:
     st.error("로그인이 필요합니다.")
     st.stop()
 
-st.title("🎯 이번주 문제")
+st.title("🎯 문제집")
 
 problems = get_problems()
 if problems:
