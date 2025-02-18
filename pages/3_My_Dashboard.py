@@ -26,8 +26,11 @@ if submissions:
     with tab1:  # 전체 문제 보기
         st.subheader("📋 전체 문제 제출 현황")
 
-        filtered_problems = problems
-        filtered_submissions = my_submissions
+        filtered_problems = problems  # 전체 문제 가져오기
+        filtered_submissions = my_submissions  # 모든 제출 데이터 사용
+
+        # 🛠 전체 문제 디버깅
+        st.write("📌 전체 문제 리스트:", filtered_problems)
 
     with tab2:  # 문제집별 보기
         st.subheader("📚 문제집별 제출 현황")
@@ -73,6 +76,9 @@ if submissions:
             "풀이 링크": f'<a href="{submitted_solutions[prob_link]}" target="_blank">풀이 보기</a>' if prob_link in submitted_solutions else "-",
             "제출일": filtered_submissions[filtered_submissions['problem_link'] == prob_link]['submit_time'].iloc[0] if prob_link in submitted_solutions else "-"
         })
+
+    # 🛠 최종 테이블 데이터 디버깅
+    st.write("📌 최종 테이블 데이터:", table_data)
 
     # 테이블 출력
     table_df = pd.DataFrame(table_data)
