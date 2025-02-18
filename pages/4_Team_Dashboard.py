@@ -15,8 +15,20 @@ problems = get_problems()
 
 if submissions:
     df = pd.DataFrame(submissions)
-    all_problems = [p['problem_set'] for p in problems]  # 문제 주차 목록 가져오기
     
+    # 문제 주차 목록 가져오기 (KeyError 방지)
+    if problems:
+        first_problem = problems[0]
+        st.write("🔍 문제 데이터 확인:", first_problem)  # 컬럼명 디버깅
+        
+        # 'problem_set'이 없으면 'set_number' 사용
+        if 'problem_set' not in first_problem and 'set_number' in first_problem:
+            all_problems = [p['set_number'] for p in problems]
+        else:
+            all_problems = [p['problem_set'] for p in problems]
+    else:
+        all_problems = []
+
     # 현재 사용자의 그룹
     current_group = st.session_state.current_user['group']
     
@@ -38,8 +50,10 @@ if submissions:
     st.subheader("👤 멤버별 제출 현황")
     member_stats = df.groupby(['name', 'group']).size().reset_index()
     member_stats.columns = ['이름', '소속', '제출횟수']
-    member_stats['제출률'] = (member_stats['제출횟수'] / len(all_problems) * 100).round(1)
-    member_stats['제출률'] = member_stats['제출률'].astype(str) + '%'
+    
+    if all_problems:
+        member_stats['제출률'] = (member_stats['제출횟수'] / len(all_problems) * 100).round(1)
+        member_stats['제출률'] = member_stats['제출률'].astype(str) + '%'
     
     # 제출률로 정렬
     member_stats = member_stats.sort_values('제출횟수', ascending=False)
@@ -79,7 +93,7 @@ if submissions:
     with col3:
         if all_problems:
             current_week = all_problems[-1]  # 가장 최근 주차 가져오기
-            current_submissions = len(df[df['problem_set'] == current_week])
+            current_submissions = len(df[df['problem_set'] == current_week]) if 'problem_set' in df.columns else 0
             st.metric(f"{current_week} 제출 수", current_submissions)
         else:
             st.metric("주차 정보 없음", "N/A")
