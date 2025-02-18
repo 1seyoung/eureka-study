@@ -2,15 +2,6 @@ import streamlit as st
 import pandas as pd
 from utils.data import get_submissions, get_problems
 
-# 웹 UI 한글 폰트 적용
-st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');
-    * {
-        font-family: 'Nanum Gothic', sans-serif;
-    }
-    </style>
-""", unsafe_allow_html=True)
 
 # 로그인 체크
 if 'logged_in' not in st.session_state or not st.session_state.logged_in:
