@@ -6,10 +6,10 @@ def get_problems():
     values = get_sheet_data('Problems', 'A2:D')
     problems = []
     for row in values:
-        if len(row) >= 3:  # 최소 3개 필드 필요
+        if len(row) >= 3:
             problems.append({
-                'set_number': row[0],    # 'week'에서 'set_number'로 변경
-                'link': row[1],          # 'links'에서 'link'로 변경
+                'set_number': row[0],
+                'link': row[1],
                 'description': row[2] if len(row) > 2 else "",
                 'date_added': row[3] if len(row) > 3 else ""
             })
