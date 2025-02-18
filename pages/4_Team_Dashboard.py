@@ -23,8 +23,16 @@ if submissions:
     df = df[df['group'] == current_group]
     
     # 🏷️ 탭 UI 추가
-    tab2 = st.tabs(["📖 팀원의 제출 답안 확인"])[0]
-
+    tab1, tab2 = st.tabs(["🏆 팀원 간 제출 순위", "📖 팀원의 제출 답안 확인"])
+    
+    # 🏆 팀원 간 제출 순위
+    with tab1:
+        st.subheader("🏆 팀원 간 제출 순위")
+        team_rankings = df.groupby('name').size().reset_index(name='제출 수')
+        team_rankings = team_rankings.sort_values(by='제출 수', ascending=False)
+        team_rankings['등수'] = range(1, len(team_rankings) + 1)
+        st.dataframe(team_rankings[['등수', 'name', '제출 수']], use_container_width=True)
+    
     # 📖 팀원의 제출 답안 확인 탭
     with tab2:
         st.subheader("📖 팀원의 제출 답안 확인")
