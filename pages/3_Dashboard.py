@@ -1,8 +1,6 @@
 import streamlit as st
-import sys
-import os
-from utils.auth import verify_user
-from utils.data import get_problems
+import pandas as pd
+from utils.data import get_submissions
 
 # 로그인 체크
 if 'logged_in' not in st.session_state or not st.session_state.logged_in:
