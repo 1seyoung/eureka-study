@@ -26,12 +26,12 @@ if problems:
     selected_set = st.selectbox(
         "문제집 선택",
         options=sorted(problem_sets.keys()),
-        format_func=lambda x: f"{x}번째 문제집"
+        format_func=lambda x: f"{x}째 문제집"
     )
     
     # 선택된 문제집 표시
     if selected_set in problem_sets:
-        st.header(f"📚 {selected_set}번째 문제집")
+        st.header(f"📚 {selected_set}째 문제집")
         st.write(f"등록일: {problem_sets[selected_set]['date_added']}")
         
         for i, link in enumerate(problem_sets[selected_set]['links'], 1):

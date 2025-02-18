@@ -11,8 +11,8 @@ st.title("📝 문제 풀이 제출")
 
 problems = get_problems()
 if problems:
-    # 문제집 번호 추출 및 정렬
-    problem_sets = sorted(set(p['week'] for p in problems), key=lambda x: int(x))
+    # 문제집 번호 추출 및 정렬 (단순 문자열 정렬)
+    problem_sets = sorted(set(p['week'].strip() for p in problems))
     
     submit_week = st.selectbox(
         "문제집 선택",
@@ -28,7 +28,7 @@ if problems:
                 st.session_state.current_user['name'],
                 submit_week,
                 submit_link,
-                st.session_state.current_user.get('group', '')  # 그룹 정보 추가
+                st.session_state.current_user.get('group', '')
             )
             st.success("성공적으로 제출되었습니다!")
         else:
