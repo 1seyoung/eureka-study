@@ -2,18 +2,18 @@ from datetime import datetime
 from .sheets import get_sheet_data, append_row
 
 def get_problems():
-    """문제 목록 가져오기"""
-    values = get_sheet_data('Problems', 'A2:E')  # task_name 포함
+    values = get_sheet_data('Problems', 'A2:E')
     problems = []
     for row in values:
         if len(row) >= 4:
             problems.append({
-                'set_number': row[0],    # A열 (문제집 번호)
-                'task_name': row[1],     # B열 (문제 이름)
-                'link': row[2],          # C열 (문제 링크)
-                'description': row[3] if len(row) > 3 else "",  # D열 (문제 설명)
-                'date_added': row[4] if len(row) > 4 else ""   # E열 (추가된 날짜)
+                'set_number': str(row[0]).strip(),  # 문자열로 변환하여 저장
+                'task_name': row[1],
+                'link': row[2],
+                'description': row[3] if len(row) > 3 else "",
+                'date_added': row[4] if len(row) > 4 else ""
             })
+    st.write("📌 로드된 문제 데이터:", problems)  # 디버깅용 출력
     return problems
 
 def save_submission(name, problem_set, problem_link, solution_link, group=''):

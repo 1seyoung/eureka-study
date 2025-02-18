@@ -13,6 +13,9 @@ st.title(f"📊 {st.session_state.current_user['name']}님의 제출 현황")
 submissions = get_submissions()
 problems = get_problems()
 
+# 🛠 문제 데이터 디버깅 (문제집 목록 확인)
+st.write("📌 문제 데이터 확인:", problems)
+
 if submissions:
     df = pd.DataFrame(submissions)
     my_submissions = df[df['name'] == st.session_state.current_user['name']]
@@ -31,6 +34,9 @@ if submissions:
 
         # 문제집 목록 가져오기
         problem_sets = sorted(set(str(p['set_number']).strip() for p in problems))
+        
+        # 🛠 문제집 리스트 확인
+        st.write("📌 문제집 리스트:", problem_sets)
 
         selected_set = st.selectbox(
             "📖 문제집 선택",
@@ -39,7 +45,11 @@ if submissions:
         )
 
         # 선택된 문제집에 해당하는 문제 필터링
-        filtered_problems = [p for p in problems if str(p['set_number']).strip() == selected_set]
+        filtered_problems = [p for p in problems if str(p['set_number']).strip() == str(selected_set)]
+        
+        # 🛠 필터링된 문제 확인
+        st.write("📌 필터링된 문제 리스트:", filtered_problems)
+
         filtered_submissions = my_submissions[my_submissions['problem_set'] == selected_set]
 
     # 📌 문제 제출 현황 표시
