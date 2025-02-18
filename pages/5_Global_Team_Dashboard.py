@@ -13,12 +13,9 @@ st.subheader("소속별 및 개인별 제출 현황을 비교합니다.")
 submissions = get_submissions()
 problems = get_problems()
 
-def display_discussions(discussion_type):
-    """의견 나누기 및 문제 추천 기능"""
-    if discussion_type == "general":
-        st.subheader("💬 의견 나누기")
-    else:
-        st.subheader("🌟 문제 추천")
+def display_discussions(discussion_type, key_prefix):
+    """의견 나누기 기능"""
+    st.subheader("💬 의견 나누기")
     
     # 저장된 의견 불러오기
     discussions = get_discussions()
@@ -38,11 +35,11 @@ def display_discussions(discussion_type):
     # 의견 입력
     user_name = st.session_state.current_user['name']
     user_group = st.session_state.current_user['group']
-    discussion_input = st.text_area("✍️ 내용을 입력하세요:")
-    anonymous_option = st.checkbox("익명으로 제출")
+    discussion_input = st.text_area("✍️ 내용을 입력하세요:", key=f"{key_prefix}_input")
+    anonymous_option = st.checkbox("익명으로 제출", key=f"{key_prefix}_anonymous")
 
     # 제출 버튼
-    if st.button("제출"):
+    if st.button("제출", key=f"{key_prefix}_submit"):
         if discussion_input.strip():
             anonymous = "yes" if anonymous_option else "no"
             save_discussion(user_name, user_group, discussion_input, anonymous, discussion_type)
@@ -56,7 +53,7 @@ if submissions:
     problems_df = pd.DataFrame(problems)
     
     # 🏷️ 탭 UI 추가
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["📋 소속별 제출 통계", "🏆 개인별 제출 순위", "💬 의견 나누기", "🏅 문제별 베스트 답안", "🌟 문제 추천"])
+    tab1, tab2, tab3, tab4 = st.tabs(["📋 소속별 제출 통계", "🏆 개인별 제출 순위", "💬 의견 나누기", "🏅 문제별 베스트 답안"])
     
     # 📋 **소속별 제출 통계**
     with tab1:
@@ -89,7 +86,7 @@ if submissions:
     
     # 💬 **의견 나누기**
     with tab3:
-        display_discussions("general")
+        display_discussions("general", "discussion")
     
     # 🏅 **문제별 베스트 답안 목록**
     with tab4:
@@ -109,9 +106,5 @@ if submissions:
                 st.info("아직 베스트 답안이 없습니다.")
         else:
             st.error("베스트 답안 데이터를 찾을 수 없습니다. 관리자에게 문의하세요.")
-    
-    # 🌟 **문제 추천**
-    with tab5:
-        display_discussions("suggestion")
 else:
     st.info("아직 제출된 풀이가 없습니다.")
