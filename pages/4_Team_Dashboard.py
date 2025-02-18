@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from datetime import datetime
 from utils.data import get_submissions, get_problems
 
 # 로그인 체크
@@ -21,6 +22,14 @@ if submissions:
     
     # 현재 사용자의 팀원만 필터링
     df = df[df['group'] == current_group]
+    
+    # 날짜 필터링 추가
+    df['submit_time'] = pd.to_datetime(df['submit_time'])
+    min_date = df['submit_time'].min().date()
+    max_date = df['submit_time'].max().date()
+    
+    start_date, end_date = st.date_input("조회할 기간 선택", [min_date, max_date])
+    df = df[(df['submit_time'].dt.date >= start_date) & (df['submit_time'].dt.date <= end_date)]
     
     # 🏷️ 탭 UI 추가
     tab1, tab2 = st.tabs(["🏆 팀원 간 제출 순위", "📖 팀원의 제출 답안 확인"])
