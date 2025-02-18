@@ -2,16 +2,16 @@ from datetime import datetime
 from .sheets import get_sheet_data, append_row
 
 def get_problems():
-    """문제 목록 가져오기"""
+    """Get problems data"""
     values = get_sheet_data('Problems', 'A2:D')
     problems = []
     for row in values:
-        if len(row) >= 3:  # 최소 3개 필드가 있어야 함
+        if len(row) >= 3:  # 최소 3개 필드 필요
             problems.append({
-                'week': row[0] + "번",  # 문제집 번호
-                'links': [row[1]],     # 링크
-                'description': row[2] if len(row) > 2 else "",  # 설명
-                'date_added': row[3] if len(row) > 3 else ""    # 등록일
+                'set_number': row[0],    # 'week'에서 'set_number'로 변경
+                'link': row[1],          # 'links'에서 'link'로 변경
+                'description': row[2] if len(row) > 2 else "",
+                'date_added': row[3] if len(row) > 3 else ""
             })
     return problems
 
