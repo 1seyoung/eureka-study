@@ -15,7 +15,7 @@ problems = get_problems()
 
 if submissions:
     df = pd.DataFrame(submissions)
-    all_problems = [p['week'] for p in problems]
+    all_problems = [p['problem_set'] for p in problems]  # 문제 주차 목록 가져오기
     
     # 현재 사용자의 그룹
     current_group = st.session_state.current_user['group']
@@ -36,7 +36,7 @@ if submissions:
     
     # 멤버별 제출 현황
     st.subheader("👤 멤버별 제출 현황")
-    member_stats = df.groupby(['이름', 'group']).size().reset_index()
+    member_stats = df.groupby(['name', 'group']).size().reset_index()
     member_stats.columns = ['이름', '소속', '제출횟수']
     member_stats['제출률'] = (member_stats['제출횟수'] / len(all_problems) * 100).round(1)
     member_stats['제출률'] = member_stats['제출률'].astype(str) + '%'
@@ -73,13 +73,16 @@ if submissions:
     
     with col2:
         total_members = len(member_stats)
-        avg_submissions = len(df) / total_members
+        avg_submissions = len(df) / total_members if total_members > 0 else 0
         st.metric("인당 평균 제출 수", f"{avg_submissions:.1f}")
     
     with col3:
-        current_week = all_problems[-1]
-        current_submissions = len(df[df['주차'] == current_week])
-        st.metric(f"{current_week} 제출 수", current_submissions)
+        if all_problems:
+            current_week = all_problems[-1]  # 가장 최근 주차 가져오기
+            current_submissions = len(df[df['problem_set'] == current_week])
+            st.metric(f"{current_week} 제출 수", current_submissions)
+        else:
+            st.metric("주차 정보 없음", "N/A")
 
 else:
     st.info("아직 제출된 풀이가 없습니다.")
