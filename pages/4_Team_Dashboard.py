@@ -47,10 +47,12 @@ if submissions:
 
         # 🔥 깃허브 잔디 스타일 히트맵 생성
         fig, ax = plt.subplots(figsize=(12, 3))
-        pivot_df = daily_counts.pivot_table(index=[0], columns='date', values='count', aggfunc='sum')
+        
+        # ✅ pivot_table 인덱스 수정 (`index='date'`)
+        pivot_df = daily_counts.pivot_table(index='date', values='count', aggfunc='sum')
 
         sns.heatmap(
-            pivot_df,
+            pivot_df.T,  # T (Transpose) 사용해서 가로 방향으로 정렬
             cmap="Greens",
             linewidths=0.5,
             linecolor="white",
