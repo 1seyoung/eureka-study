@@ -20,7 +20,9 @@ def login_page():
     with col2:
         st.title("💻 코딩테스트 스터디 플랫폼")
         
-        with st.card("로그인"):
+        # card 대신 container 사용
+        with st.container():
+            st.subheader("로그인")
             username = st.text_input("사용자명")
             password = st.text_input("비밀번호", type="password")
             
