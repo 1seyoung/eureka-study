@@ -2,6 +2,7 @@
 import streamlit as st
 from utils.data import save_submission, get_problems
 import pandas as pd
+
 # 로그인 체크
 if 'logged_in' not in st.session_state or not st.session_state.logged_in:
     st.error("로그인이 필요합니다.")
@@ -12,18 +13,18 @@ st.title("📝 문제 풀이 제출")
 problems = get_problems()
 if problems:
     # 문제집 목록 가져오기
-    problem_sets = sorted(set(str(p['set_number']).strip() for p in problems))
+    problem_sets = sorted(set(str(p['set']).strip() for p in problems))
     
     selected_set = st.selectbox(
         "📚 문제집 선택",
         options=problem_sets,
-        format_func=lambda x: f"{x}번째 문제집"
+        format_func=lambda x: f"{x}"
     )
 
     # 선택한 문제집에 속한 문제들 가져오기
     selected_problems = [
         {"name": p['task_name'], "link": p['link']}
-        for p in problems if str(p['set_number']).strip() == selected_set
+        for p in problems if str(p['set']).strip() == selected_set
     ]
 
     # 문제 선택 (문제 이름 + 링크)

@@ -12,19 +12,18 @@ st.title("🎯 이번주 문제")
 
 problems = get_problems()
 if problems:
-    # 문제집 번호로 그룹화
+    # 문제집 이름으로 그룹화
     problem_sets = {}
     for problem in problems:
-        set_num = str(problem['set_number']).strip()  # 숫자라도 문자열 변환
-        if set_num not in problem_sets:
-            problem_sets[set_num] = {
+        set_name = str(problem['set']).strip()  # 문제집 이름으로 그룹화
+        if set_name not in problem_sets:
+            problem_sets[set_name] = {
                 'problems': [],  # 문제 정보를 리스트로 저장
-                'description': problem.get('description', ''),  # 설명 추가
                 'date_added': problem['date_added']
             }
         
         # 문제 정보 추가 (이름 + 링크)
-        problem_sets[set_num]['problems'].append({
+        problem_sets[set_name]['problems'].append({
             'name': problem['task_name'],
             'link': problem['link']
         })
@@ -33,17 +32,13 @@ if problems:
     selected_set = st.selectbox(
         "📚 문제집 선택",
         options=sorted(problem_sets.keys()),
-        format_func=lambda x: f"{x}번째 문제집"
+        format_func=lambda x: f"{x}"
     )
     
     # 선택된 문제집 표시
     if selected_set in problem_sets:
-        st.header(f"📚 {selected_set}번째 문제집")
+        st.header(f"📚 {selected_set}")
         st.write(f"📅 등록일: {problem_sets[selected_set]['date_added']}")
-        
-        # 설명이 있으면 표시
-        if problem_sets[selected_set]['description']:
-            st.write(f"📝 {problem_sets[selected_set]['description']}")
         
         # 문제 리스트 테이블 형식으로 표시
         st.subheader("📝 문제 목록")

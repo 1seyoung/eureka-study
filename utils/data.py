@@ -8,7 +8,7 @@ def get_problems():
     for row in values:
         if len(row) >= 5:  # 최소 5개 이상 있어야 정상적인 데이터
             problems.append({
-                'set_number': row[0],    # A열 (문제집 번호)
+                'set': row[0],    # A열 (문제집 이름)
                 'task_name': row[1],     # B열 (문제 이름)
                 'link': row[2],          # C열 (문제 링크)
                 'description': row[3] if len(row) > 3 else "",  # D열 (문제 설명)
@@ -37,7 +37,7 @@ def get_submissions():
         if len(row) >= 6:  # 6개 컬럼이 다 있는 경우만 처리
             submissions.append({
                 'name': row[0],           # A열 (이름)
-                'problem_set': row[1],    # B열 (문제집 번호)
+                'problem_set': row[1],    # B열 (문제집 이름)
                 'problem_link': row[2],   # C열 (문제 링크)
                 'solution_link': row[3],  # D열 (풀이 링크)
                 'submit_time': row[4],    # E열 (제출 시간)

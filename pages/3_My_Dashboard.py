@@ -34,7 +34,7 @@ if submissions:
             status = "✅" if prob_link in all_submissions['problem_link'].values else "❌"
             
             table_data.append({
-                "문제집": f"{prob['set_number']}번째",
+                "문제집": prob['set'],
                 "문제 이름": prob['task_name'],
                 "상태": status,
                 "문제 링크": f'<a href="{prob_link}" target="_blank">문제 보기</a>',
@@ -50,16 +50,16 @@ if submissions:
         st.subheader("📚 문제집별 제출 현황")
 
         # ✅ 문제집 목록 가져오기
-        problem_sets = sorted(set(str(p['set_number']).strip() for p in problems))
+        problem_sets = sorted(set(str(p['set']).strip() for p in problems))
         
         selected_set = st.selectbox(
             "📖 문제집 선택",
             options=problem_sets,
-            format_func=lambda x: f"{x}번째 문제집"
+            format_func=lambda x: f"{x}"
         )
 
         # ✅ 문제집별 보기에서는 `filtered_problems` 사용 (독립 변수!)
-        filtered_problems = [p for p in problems if str(p['set_number']).strip() == selected_set]
+        filtered_problems = [p for p in problems if str(p['set']).strip() == selected_set]
 
         # ✅ 해당 문제집의 제출 데이터 필터링
         filtered_submissions = my_submissions[my_submissions['problem_set'] == selected_set]
@@ -75,7 +75,7 @@ if submissions:
             status = "✅" if prob_link in submitted_solutions else "❌"
 
             table_data.append({
-                "문제집": f"{prob['set_number']}번째",
+                "문제집": prob['set'],
                 "문제 이름": prob['task_name'],
                 "상태": status,
                 "문제 링크": f'<a href="{prob_link}" target="_blank">문제 보기</a>',

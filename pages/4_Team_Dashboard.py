@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 from utils.data import get_submissions, get_problems
 
-
 # 로그인 체크
 if 'logged_in' not in st.session_state or not st.session_state.logged_in:
     st.error("로그인이 필요합니다.")
@@ -50,9 +49,8 @@ if submissions:
             table_data = []
             for _, row in merged_df.iterrows():
                 table_data.append({
-                    "문제집": f"{row['set_number']}번째",
+                    "문제집": row['set'],
                     "문제 이름": row["task_name"],
-                    "설명": row["description"],
                     "문제 링크": f'<a href="{row["problem_link"]}" target="_blank">문제 보기</a>',
                     "풀이 링크": f'<a href="{row["solution_link"]}" target="_blank">풀이 보기</a>',
                     "제출일": row["submit_time"]

@@ -50,7 +50,6 @@ def display_discussions(discussion_type, key_prefix):
             anonymous = "yes" if anonymous_option else "no"
             save_discussion(user_name, user_group, discussion_input, anonymous, discussion_type)
             st.success("제출되었습니다! 📝")
-            st.experimental_rerun()  # 새로고침하여 반영
         else:
             st.warning("내용을 입력하세요.")
 
@@ -103,13 +102,13 @@ if submissions:
             best_solutions = problems_df.dropna(subset=['best'])  # best가 있는 문제만 선택
 
             if not best_solutions.empty:
-                # 베스트 답안 링크 HTML 변환
-                best_solutions['문제 이름'] = best_solutions['task_name']
+                # 문제집 이름을 기준으로 변경
+                best_solutions['문제집'] = best_solutions['set']
                 best_solutions['문제 링크'] = best_solutions['link']
                 best_solutions['베스트 답안'] = best_solutions['best'].apply(lambda x: f'<a href="{x}" target="_blank">{x}</a>')
                 
                 # 테이블 출력
-                st.write(best_solutions[['문제 이름', '문제 링크', '베스트 답안']].to_html(escape=False, index=False), unsafe_allow_html=True)
+                st.write(best_solutions[['문제집', '문제 이름', '문제 링크', '베스트 답안']].to_html(escape=False, index=False), unsafe_allow_html=True)
             else:
                 st.info("아직 베스트 답안이 없습니다.")
         else:
