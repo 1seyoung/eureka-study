@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
-from utils.data import get_submissions, get_problems
+from datetime import datetime
+from utils.data import get_submissions, get_problems, save_discussion, get_discussions
 
 # 페이지 설정
 st.set_page_config(page_title="📊 글로벌 대시보드", layout="wide")
@@ -12,12 +13,50 @@ st.subheader("소속별 및 개인별 제출 현황을 비교합니다.")
 submissions = get_submissions()
 problems = get_problems()
 
+def display_discussions(discussion_type):
+    """의견 나누기 및 문제 추천 기능"""
+    if discussion_type == "general":
+        st.subheader("💬 의견 나누기")
+    else:
+        st.subheader("🌟 문제 추천")
+    
+    # 저장된 의견 불러오기
+    discussions = get_discussions()
+    
+    # 해당 타입의 의견만 필터링
+    filtered_discussions = [d for d in discussions if d['type'] == discussion_type]
+    
+    if filtered_discussions:
+        for d in filtered_discussions:
+            author = "익명" if d['anonymous'] == "yes" else f"{d['name']} ({d['group']})"
+            with st.container():
+                st.markdown(f"**{author}**  
+📌 {d['comment']}  
+🕒 {d['timestamp']}")
+                st.markdown("---")
+    
+    # 의견 입력
+    user_name = st.session_state.current_user['name']
+    user_group = st.session_state.current_user['group']
+    discussion_input = st.text_area("✍️ 내용을 입력하세요:")
+    anonymous_option = st.checkbox("익명으로 제출")
+
+    # 제출 버튼
+    if st.button("제출"):
+        if discussion_input.strip():
+            anonymous = "yes" if anonymous_option else "no"
+            save_discussion(user_name, user_group, discussion_input, anonymous, discussion_type)
+            st.success("제출되었습니다! 📝")
+            st.experimental_rerun()  # 새로고침하여 반영
+        else:
+            st.warning("내용을 입력하세요.")
+
 if submissions:
     df = pd.DataFrame(submissions)
     problems_df = pd.DataFrame(problems)
     
     # 🏷️ 탭 UI 추가
-    tab1, tab2, tab3, tab4 = st.tabs(["📋 소속별 제출 통계", "🏆 개인별 제출 순위", "💬 의견 나누기", "🏅 문제별 베스트 답안"])
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["📋 소속별 제출 통계", "🏆 개인별 제출 순위", "💬 의견 나누기", "🏅 문제별 베스트 답안", "🌟 문제 추천"])
     
     # 📋 **소속별 제출 통계**
     with tab1:
@@ -38,14 +77,6 @@ if submissions:
         # 제출 수 기준 정렬
         group_stats = group_stats.sort_values(by='총_제출_수', ascending=False)
 
-        # 가장 활발한 팀 & 평균 제출률이 높은 팀 하이라이트
-        most_active_team = group_stats.iloc[0]['group'] if not group_stats.empty else "N/A"
-        best_submission_team = group_stats.sort_values(by='평균 제출률 (%)', ascending=False).iloc[0]['group'] if not group_stats.empty else "N/A"
-
-        # 🏆 **하이라이트 정보**
-        st.markdown(f"🏅 **가장 활발한 팀:** `{most_active_team}` (제출 수 최다)")
-        st.markdown(f"📈 **평균 제출률이 가장 높은 팀:** `{best_submission_team}`")
-
         st.dataframe(group_stats, use_container_width=True)
     
     # 🏆 **개인별 제출 순위**
@@ -58,21 +89,14 @@ if submissions:
     
     # 💬 **의견 나누기**
     with tab3:
-        st.subheader("💬 의견 나누기")
-        discussion = st.text_area("팀원들과 토론할 내용을 입력하세요:")
-        if st.button("의견 제출"):
-            st.success("의견이 제출되었습니다! 📝")
+        display_discussions("general")
     
     # 🏅 **문제별 베스트 답안 목록**
     with tab4:
         st.subheader("🏅 문제별 베스트 답안 목록")
-        best_solutions = problems_df[['set_number', 'task_name', 'link', 'description', 'best']]
-        best_solutions = best_solutions.dropna(subset=['best'])  # 베스트 답안이 있는 문제만 필터링
-        
-        if not best_solutions.empty:
-            best_solutions['베스트 답안'] = best_solutions['best'].apply(lambda x: f'<a href="{x}" target="_blank">베스트 답안 보기</a>')
-            st.write(best_solutions[['set_number', 'task_name', 'description', '베스트 답안']].to_html(escape=False, index=False), unsafe_allow_html=True)
-        else:
-            st.info("아직 베스트 답안이 없습니다.")
+    
+    # 🌟 **문제 추천**
+    with tab5:
+        display_discussions("suggestion")
 else:
     st.info("아직 제출된 풀이가 없습니다.")

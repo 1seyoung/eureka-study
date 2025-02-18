@@ -44,3 +44,31 @@ def get_submissions():
                 'group': row[5]           # F열 (그룹)
             })
     return submissions
+
+def save_discussion(name, group, comment, anonymous="no", discussion_type="general"):
+    """의견 또는 문제 추천 저장"""
+    values = [
+        name,
+        group,
+        comment,
+        datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        anonymous,
+        discussion_type  # "general" (일반 의견) 또는 "suggestion" (문제 추천)
+    ]
+    return append_row('Discussions', values)
+
+def get_discussions():
+    """의견 및 문제 추천 가져오기"""
+    values = get_sheet_data('Discussions', 'A2:G')  # G열까지 가져와서 type 포함
+    discussions = []
+    for row in values:
+        if len(row) >= 6:
+            discussions.append({
+                'name': row[0],        # A열 (이름)
+                'group': row[1],       # B열 (소속)
+                'comment': row[2],     # C열 (내용)
+                'timestamp': row[3],   # D열 (제출 시간)
+                'anonymous': row[4],   # E열 (익명 여부)
+                'type': row[5]         # F열 ("general" 또는 "suggestion")
+            })
+    return discussions
