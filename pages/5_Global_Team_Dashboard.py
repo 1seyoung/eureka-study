@@ -50,10 +50,10 @@ if submissions:
     # 🏆 **개인별 제출 순위**
     with tab2:
         st.subheader("🏆 개인별 제출 순위")
-        individual_stats = df.groupby('name').size().reset_index(name='제출 수')
+        individual_stats = df.groupby(['name', 'group']).size().reset_index(name='제출 수')
         individual_stats = individual_stats.sort_values(by='제출 수', ascending=False)
         individual_stats['등수'] = range(1, len(individual_stats) + 1)
-        st.dataframe(individual_stats, use_container_width=True)
+        st.dataframe(individual_stats[['등수', 'name', 'group', '제출 수']], use_container_width=True)
 
 else:
     st.info("아직 제출된 풀이가 없습니다.")
