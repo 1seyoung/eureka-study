@@ -23,12 +23,28 @@ if submissions:
     with tab1:  # 전체 문제 보기
         st.subheader("📋 전체 문제 제출 현황")
 
-        # ✅ "전체 문제 보기"에서 모든 문제 포함 (독립적으로 유지)
-        display_problems = problems  # 모든 문제 가져오기
-        filtered_submissions = my_submissions  # 모든 제출 데이터 사용
+        # ✅ "전체 문제 보기"에서는 절대 변경되지 않는 문제 리스트 사용!
+        all_problems = problems  # 모든 문제 가져오기
+        all_submissions = my_submissions  # 모든 제출 데이터
 
-        # 🛠 디버깅: 전체 문제 리스트 확인
-        st.write("📌 전체 문제 리스트 (테이블 생성 전):", display_problems)
+        # ✅ 테이블 데이터 생성 (전체 문제 기준)
+        table_data = []
+        for prob in all_problems:
+            prob_link = prob['link'].strip()
+            status = "✅" if prob_link in all_submissions['problem_link'].values else "❌"
+            
+            table_data.append({
+                "문제집": f"{prob['set_number']}번째",
+                "문제 이름": prob['task_name'],
+                "상태": status,
+                "문제 링크": f'<a href="{prob_link}" target="_blank">문제 보기</a>',
+                "풀이 링크": "-",
+                "제출일": "-"
+            })
+        
+        # ✅ 테이블 출력
+        table_df = pd.DataFrame(table_data)
+        st.write(table_df.to_html(escape=False, index=False), unsafe_allow_html=True)
 
     with tab2:  # 문제집별 보기
         st.subheader("📚 문제집별 제출 현황")
@@ -42,41 +58,36 @@ if submissions:
             format_func=lambda x: f"{x}번째 문제집"
         )
 
-        # ✅ 선택한 문제집에 해당하는 문제만 가져오기
-        display_problems = [p for p in problems if str(p['set_number']).strip() == str(selected_set)]
+        # ✅ 문제집별 보기에서는 `filtered_problems` 사용 (독립 변수!)
+        filtered_problems = [p for p in problems if str(p['set_number']).strip() == selected_set]
         
-        st.write("📌 선택한 문제집의 문제 리스트:", display_problems)
+        st.write("📌 선택한 문제집의 문제 리스트:", filtered_problems)
 
         # ✅ 해당 문제집의 제출 데이터 필터링
         filtered_submissions = my_submissions[my_submissions['problem_set'] == selected_set]
 
-    # 📌 제출된 풀이 매핑 (정리 후)
-    submitted_solutions = dict(zip(filtered_submissions['problem_link'].str.strip(), 
-                                   filtered_submissions['solution_link'].str.strip()))
-    st.write("📌 제출된 풀이 매핑 (정리 후):", submitted_solutions)
+        # ✅ 제출된 풀이 매핑 (문제집별 전용)
+        submitted_solutions = dict(zip(filtered_submissions['problem_link'].str.strip(), 
+                                       filtered_submissions['solution_link'].str.strip()))
 
-    # ✅ 테이블 데이터 구성 (탭별로 독립적으로 유지)
-    table_data = []
-    
-    for prob in display_problems:
-        prob_link = prob['link'].strip()  # 문제 링크 정리
+        # ✅ 문제집별 테이블 데이터 생성
+        table_data = []
+        for prob in filtered_problems:
+            prob_link = prob['link'].strip()
+            status = "✅" if prob_link in submitted_solutions else "❌"
 
-        status = "✅" if prob_link in submitted_solutions else "❌"
+            table_data.append({
+                "문제집": f"{prob['set_number']}번째",
+                "문제 이름": prob['task_name'],
+                "상태": status,
+                "문제 링크": f'<a href="{prob_link}" target="_blank">문제 보기</a>',
+                "풀이 링크": f'<a href="{submitted_solutions[prob_link]}" target="_blank">풀이 보기</a>' if prob_link in submitted_solutions else "-",
+                "제출일": filtered_submissions[filtered_submissions['problem_link'].str.strip() == prob_link]['submit_time'].iloc[0] if prob_link in submitted_solutions else "-"
+            })
 
-        table_data.append({
-            "문제집": f"{prob['set_number']}번째",
-            "문제 이름": prob['task_name'],
-            "상태": status,
-            "문제 링크": f'<a href="{prob_link}" target="_blank">문제 보기</a>',
-            "풀이 링크": f'<a href="{submitted_solutions[prob_link]}" target="_blank">풀이 보기</a>' if prob_link in submitted_solutions else "-",
-            "제출일": filtered_submissions[filtered_submissions['problem_link'].str.strip() == prob_link]['submit_time'].iloc[0] if prob_link in submitted_solutions else "-"
-        })
-
-    st.write("📌 최종 테이블 데이터:", table_data)
-
-    # 테이블 출력
-    table_df = pd.DataFrame(table_data)
-    st.write(table_df.to_html(escape=False, index=False), unsafe_allow_html=True)
+        # ✅ 테이블 출력
+        table_df = pd.DataFrame(table_data)
+        st.write(table_df.to_html(escape=False, index=False), unsafe_allow_html=True)
 
 else:
     st.info("아직 제출한 풀이가 없습니다.")
