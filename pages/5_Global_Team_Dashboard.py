@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from utils.data import get_submissions, get_problems, get_best_solutions
+from utils.data import get_submissions, get_problems
 
 # 페이지 설정
 st.set_page_config(page_title="📊 글로벌 대시보드", layout="wide")
@@ -11,10 +11,10 @@ st.subheader("소속별 및 개인별 제출 현황을 비교합니다.")
 # 데이터 로드
 submissions = get_submissions()
 problems = get_problems()
-best_solutions = get_best_solutions()
 
 if submissions:
     df = pd.DataFrame(submissions)
+    problems_df = pd.DataFrame(problems)
     
     # 🏷️ 탭 UI 추가
     tab1, tab2, tab3, tab4 = st.tabs(["📋 소속별 제출 통계", "🏆 개인별 제출 순위", "💬 의견 나누기", "🏅 문제별 베스트 답안"])
@@ -66,9 +66,12 @@ if submissions:
     # 🏅 **문제별 베스트 답안 목록**
     with tab4:
         st.subheader("🏅 문제별 베스트 답안 목록")
-        if best_solutions:
-            best_df = pd.DataFrame(best_solutions)
-            st.dataframe(best_df, use_container_width=True)
+        best_solutions = problems_df[['set_number', 'task_name', 'link', 'description', 'best']]
+        best_solutions = best_solutions.dropna(subset=['best'])  # 베스트 답안이 있는 문제만 필터링
+        
+        if not best_solutions.empty:
+            best_solutions['베스트 답안'] = best_solutions['best'].apply(lambda x: f'<a href="{x}" target="_blank">베스트 답안 보기</a>')
+            st.write(best_solutions[['set_number', 'task_name', 'description', '베스트 답안']].to_html(escape=False, index=False), unsafe_allow_html=True)
         else:
             st.info("아직 베스트 답안이 없습니다.")
 else:
