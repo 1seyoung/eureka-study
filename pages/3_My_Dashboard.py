@@ -30,7 +30,7 @@ if submissions:
         filtered_submissions = my_submissions  # 모든 제출 데이터 사용
 
         # 🛠 전체 문제 디버깅
-        st.write("📌 전체 문제 리스트:", filtered_problems)
+        st.write("📌 전체 문제 리스트 (테이블 생성 전):", filtered_problems)
 
     with tab2:  # 문제집별 보기
         st.subheader("📚 문제집별 제출 현황")
@@ -38,9 +38,6 @@ if submissions:
         # 문제집 목록 가져오기
         problem_sets = sorted(set(str(p['set_number']).strip() for p in problems))
         
-        # 🛠 문제집 리스트 확인
-        st.write("📌 문제집 리스트:", problem_sets)
-
         selected_set = st.selectbox(
             "📖 문제집 선택",
             options=problem_sets,
@@ -50,7 +47,6 @@ if submissions:
         # 선택된 문제집에 해당하는 문제 필터링
         filtered_problems = [p for p in problems if str(p['set_number']).strip() == str(selected_set)]
         
-        # 🛠 필터링된 문제 확인
         st.write("📌 필터링된 문제 리스트:", filtered_problems)
 
         filtered_submissions = my_submissions[my_submissions['problem_set'] == selected_set]
@@ -64,6 +60,11 @@ if submissions:
     table_data = []
     for prob in filtered_problems:
         prob_link = prob['link'].strip()  # 문제 링크 정리
+
+        # 🛠 디버깅: 문제 링크 비교
+        st.write(f"📌 검사중: 문제 링크: {prob_link}")
+        st.write("📌 제출된 풀이 매핑 키값들:", list(submitted_solutions.keys()))
+
         status = "✅" if prob_link in submitted_solutions else "❌"
 
         table_data.append({
@@ -75,23 +76,11 @@ if submissions:
             "제출일": filtered_submissions[filtered_submissions['problem_link'].str.strip() == prob_link]['submit_time'].iloc[0] if prob_link in submitted_solutions else "-"
         })
 
-    # 🛠 최종 테이블 데이터 디버깅
     st.write("📌 최종 테이블 데이터:", table_data)
 
     # 테이블 출력
     table_df = pd.DataFrame(table_data)
     st.write(table_df.to_html(escape=False, index=False), unsafe_allow_html=True)
-
-    # 📈 통계 섹션
-    st.subheader("📈 통계")
-    col1, col2 = st.columns(2)
-
-    with col1:
-        submission_rate = (len(filtered_submissions) / len(filtered_problems) * 100) if len(filtered_problems) > 0 else 0
-        st.metric("제출률", f"{submission_rate:.1f}%")
-
-    with col2:
-        st.metric("제출 문제 수", f"{len(filtered_submissions)} / {len(filtered_problems)}")
 
 else:
     st.info("아직 제출한 풀이가 없습니다.")
