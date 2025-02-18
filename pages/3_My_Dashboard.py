@@ -1,4 +1,3 @@
-# pages/3_📊_My_Dashboard.py
 import streamlit as st
 import pandas as pd
 from utils.data import get_submissions, get_problems
@@ -18,8 +17,35 @@ if submissions:
     df = pd.DataFrame(submissions)
     my_submissions = df[df['name'] == st.session_state.current_user['name']]
     
-    # 보기 모드 선택
-    view_mode = st.radio("📌 보기 모드", ["전체 문제", "특정 문제집"])
+    # 보기 모드 선택 (🖌️ 스타일 추가)
+    with st.container():
+        st.markdown("""
+        <style>
+            .radio-labels {
+                font-size: 18px;
+                font-weight: bold;
+                color: #444;
+            }
+            div[data-testid="stRadio"] label {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 5px;
+                border-radius: 20px;
+                background-color: #f5f5f5;
+                cursor: pointer;
+                transition: 0.3s;
+            }
+            div[data-testid="stRadio"] label:hover {
+                background-color: #e1e1e1;
+            }
+            div[data-testid="stRadio"] input:checked + label {
+                background-color: #ff4b4b;
+                color: white;
+            }
+        </style>
+        """, unsafe_allow_html=True)
+
+        view_mode = st.radio("📌 보기 모드", ["전체 문제", "특정 문제집"], horizontal=True)
 
     # 문제집 목록 가져오기
     problem_sets = sorted(set(str(p['set_number']).strip() for p in problems))
