@@ -17,7 +17,7 @@ if problems:
     submit_week = st.selectbox(
         "문제집 선택",
         options=problem_sets,
-        format_func=lambda x: f"{x}번째 문제집"
+        format_func=lambda x: f"{x}째 문제집"
     )
 
     submit_link = st.text_input("풀이 링크 (노션, 깃허브 등)")
