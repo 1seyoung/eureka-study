@@ -30,9 +30,9 @@ def display_discussions(discussion_type):
         for d in filtered_discussions:
             author = "익명" if d['anonymous'] == "yes" else f"{d['name']} ({d['group']})"
             with st.container():
-                st.markdown(f"**{author}**  
+                st.markdown(f"""**{author}**  
 📌 {d['comment']}  
-🕒 {d['timestamp']}")
+🕒 {d['timestamp']}""")
                 st.markdown("---")
     
     # 의견 입력
@@ -94,6 +94,21 @@ if submissions:
     # 🏅 **문제별 베스트 답안 목록**
     with tab4:
         st.subheader("🏅 문제별 베스트 답안 목록")
+
+        # best 필드가 존재하는 문제만 필터링
+        if 'best' in problems_df.columns:
+            best_solutions = problems_df.dropna(subset=['best'])  # best가 있는 문제만 선택
+
+            if not best_solutions.empty:
+                # 베스트 답안 링크 HTML 변환
+                best_solutions['베스트 답안'] = best_solutions['best'].apply(lambda x: f'<a href="{x}" target="_blank">베스트 답안 보기</a>')
+                
+                # 테이블 출력
+                st.write(best_solutions[['set_number', 'task_name', 'description', '베스트 답안']].to_html(escape=False, index=False), unsafe_allow_html=True)
+            else:
+                st.info("아직 베스트 답안이 없습니다.")
+        else:
+            st.error("베스트 답안 데이터를 찾을 수 없습니다. 관리자에게 문의하세요.")
     
     # 🌟 **문제 추천**
     with tab5:
