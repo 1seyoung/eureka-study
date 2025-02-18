@@ -24,23 +24,8 @@ problems = get_problems()
 def display_discussions(discussion_type, key_prefix):
     """의견 나누기 기능"""
     st.subheader("💬 의견 나누기")
-    
-    # 저장된 의견 불러오기
-    discussions = get_discussions()
-    
-    # 해당 타입의 의견만 필터링
-    filtered_discussions = [d for d in discussions if d['type'] == discussion_type]
-    
-    if filtered_discussions:
-        for d in filtered_discussions:
-            author = "익명" if d['anonymous'] == "yes" else f"{d['name']} ({d['group']})"
-            with st.container():
-                st.markdown(f"""**{author}**  
-📌 {d['comment']}  
-🕒 {d['timestamp']}""")
-                st.markdown("---")
-    
-    # 의견 입력
+
+    # 의견 입력 (맨 위에 고정)
     discussion_input = st.text_area("✍️ 내용을 입력하세요:", key=f"{key_prefix}_input")
     anonymous_option = st.checkbox("익명으로 제출", key=f"{key_prefix}_anonymous")
 
@@ -50,8 +35,24 @@ def display_discussions(discussion_type, key_prefix):
             anonymous = "yes" if anonymous_option else "no"
             save_discussion(user_name, user_group, discussion_input, anonymous, discussion_type)
             st.success("제출되었습니다! 📝")
+            st.experimental_rerun()  # 새로고침하여 반영
         else:
             st.warning("내용을 입력하세요.")
+
+    # 저장된 의견 불러오기
+    discussions = get_discussions()
+
+    # 해당 타입의 의견만 필터링 (최신 의견이 아래에 쌓이도록 출력)
+    filtered_discussions = [d for d in discussions if d['type'] == discussion_type]
+    
+    if filtered_discussions:
+        for d in reversed(filtered_discussions):  # 새로운 글이 아래로 가도록 순서 변경
+            author = "익명" if d['anonymous'] == "yes" else f"{d['name']} ({d['group']})"
+            with st.container():
+                st.markdown(f"""**{author}**  
+📌 {d['comment']}  
+🕒 {d['timestamp']}""")
+                st.markdown("---")
 
 if submissions:
     df = pd.DataFrame(submissions)
