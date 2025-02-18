@@ -45,18 +45,21 @@ if submissions:
         all_dates_df = pd.DataFrame({'date': date_range.date})
         daily_counts = pd.merge(all_dates_df, daily_counts, on='date', how='left').fillna(0)
 
+        # ✅ 깃허브 스타일로 변경 (가로로 배치, 7일 단위로 나누기)
+        daily_counts['week'] = daily_counts['date'].apply(lambda x: x.isocalendar()[1])  # 주차 계산
+        daily_counts['weekday'] = daily_counts['date'].apply(lambda x: x.weekday())  # 요일 계산 (0=월요일)
+
+        pivot_df = daily_counts.pivot(index='weekday', columns='week', values='count')
+
         # 🔥 깃허브 잔디 스타일 히트맵 생성
         fig, ax = plt.subplots(figsize=(12, 3))
-        
-        # ✅ pivot_table 인덱스 수정 (`index='date'`)
-        pivot_df = daily_counts.pivot_table(index='date', values='count', aggfunc='sum')
-
         sns.heatmap(
-            pivot_df.T,  # T (Transpose) 사용해서 가로 방향으로 정렬
+            pivot_df,  # ✅ 날짜를 가로로 정렬 (열=주, 행=요일)
             cmap="Greens",
             linewidths=0.5,
             linecolor="white",
             cbar=False,
+            square=True,  # ✅ 정사각형 유지
             ax=ax
         )
 
