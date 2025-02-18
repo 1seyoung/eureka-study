@@ -3,16 +3,17 @@ from .sheets import get_sheet_data, append_row
 
 def get_problems():
     """문제 목록 가져오기"""
-    values = get_sheet_data('Problems', 'A2:E')  # task_name 포함
+    values = get_sheet_data('Problems', 'A2:F')  # F열까지 가져와서 best 포함
     problems = []
     for row in values:
-        if len(row) >= 4:
+        if len(row) >= 5:  # 최소 5개 이상 있어야 정상적인 데이터
             problems.append({
                 'set_number': row[0],    # A열 (문제집 번호)
                 'task_name': row[1],     # B열 (문제 이름)
                 'link': row[2],          # C열 (문제 링크)
                 'description': row[3] if len(row) > 3 else "",  # D열 (문제 설명)
-                'date_added': row[4] if len(row) > 4 else ""   # E열 (추가된 날짜)
+                'date_added': row[4] if len(row) > 4 else "",   # E열 (추가된 날짜)
+                'best': row[5] if len(row) > 5 else ""         # F열 (베스트 답안 링크)
             })
     return problems
 
