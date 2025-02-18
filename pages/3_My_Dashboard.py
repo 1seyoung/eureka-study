@@ -60,8 +60,6 @@ if submissions:
 
         # ✅ 문제집별 보기에서는 `filtered_problems` 사용 (독립 변수!)
         filtered_problems = [p for p in problems if str(p['set_number']).strip() == selected_set]
-        
-        st.write("📌 선택한 문제집의 문제 리스트:", filtered_problems)
 
         # ✅ 해당 문제집의 제출 데이터 필터링
         filtered_submissions = my_submissions[my_submissions['problem_set'] == selected_set]
