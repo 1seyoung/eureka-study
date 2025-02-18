@@ -1,7 +1,7 @@
+# pages/3_📊_My_Dashboard.py
 import streamlit as st
 import pandas as pd
 from utils.data import get_submissions, get_problems
-import plotly.express as px
 
 # 로그인 체크
 if 'logged_in' not in st.session_state or not st.session_state.logged_in:
@@ -21,39 +21,36 @@ if submissions:
     my_submissions = df[df['이름'] == st.session_state.current_user['name']]
     
     # 주차별 제출 상태
-    st.subheader("🎯 주차별 제출 상태")
+    st.subheader("🎯 문제별 제출 상태")
     
-    all_weeks = [p['week'] for p in problems]
-    submitted_weeks = my_submissions['주차'].unique()
+    all_problems = {p['week']: p['links'][0] for p in problems}  # 문제번호: 문제링크
+    submitted_problems = dict(zip(my_submissions['주차'], my_submissions['제출링크']))
     
-    # 상태 표시를 위한 데이터프레임 생성
-    status_data = []
-    for week in all_weeks:
-        status = "✅ 제출" if week in submitted_weeks else "❌ 미제출"
-        link = my_submissions[my_submissions['주차'] == week]['제출링크'].iloc[0] if week in submitted_weeks else ""
-        status_data.append({"주차": week, "상태": status, "링크": link})
+    # 표 형태로 데이터 준비
+    table_data = []
+    for prob_num, prob_link in all_problems.items():
+        status = "✅" if prob_num in submitted_problems else "❌"
+        table_data.append({
+            "문제번호": prob_num,
+            "상태": status,
+            "문제 링크": f'<a href="{prob_link}" target="_blank">문제 보기</a>',
+            "풀이 링크": f'<a href="{submitted_problems.get(prob_num, "#")}" target="_blank">풀이 보기</a>' if prob_num in submitted_problems else "-"
+        })
     
-    # 깔끔한 표 형태로 표시
-    for _, row in pd.DataFrame(status_data).iterrows():
-        cols = st.columns([2, 2, 6])
-        with cols[0]:
-            st.write(row['주차'])
-        with cols[1]:
-            st.write(row['상태'])
-        with cols[2]:
-            if row['링크']:
-                st.write(f"[풀이 링크]({row['링크']})")
+    # DataFrame 생성 및 표시
+    table_df = pd.DataFrame(table_data)
+    st.write(table_df.to_html(escape=False, index=False), unsafe_allow_html=True)
     
-    # 내 통계
+    # 통계
     st.subheader("📈 나의 통계")
     col1, col2 = st.columns(2)
     
     with col1:
-        submission_rate = (len(my_submissions) / len(all_weeks)) * 100
+        submission_rate = (len(my_submissions) / len(all_problems)) * 100
         st.metric("내 제출률", f"{submission_rate:.1f}%")
     
     with col2:
-        st.metric("총 제출 문제 수", len(my_submissions))
+        st.metric("총 제출 문제 수", str(len(my_submissions)))
 
 else:
     st.info("아직 제출한 풀이가 없습니다.")
