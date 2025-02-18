@@ -1,7 +1,7 @@
 # pages/2_📝_Submit.py
 import streamlit as st
 from utils.data import save_submission, get_problems
-
+import pandas as pd
 # 로그인 체크
 if 'logged_in' not in st.session_state or not st.session_state.logged_in:
     st.error("로그인이 필요합니다.")

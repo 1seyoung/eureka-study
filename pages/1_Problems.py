@@ -1,6 +1,7 @@
 # pages/1_🎯_Problems.py
 import streamlit as st
 from utils.data import get_problems
+import pandas as pd
 
 # 로그인 체크
 if 'logged_in' not in st.session_state or not st.session_state.logged_in:
