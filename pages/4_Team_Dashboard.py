@@ -28,10 +28,7 @@ if submissions:
     member_stats.columns = ['이름', '제출 횟수']
 
     # 문제집 개수 가져오기
-    if problems:
-        total_problems = len(problems)
-    else:
-        total_problems = 1  # 0으로 나누는 오류 방지
+    total_problems = len(problems) if problems else 1  # 0으로 나누는 오류 방지
 
     # 제출률 계산
     member_stats['제출률'] = (member_stats['제출 횟수'] / total_problems * 100).round(1)
@@ -66,6 +63,34 @@ if submissions:
 
     with col3:
         st.metric("전체 문제 수", total_problems)
+
+    # 🏆 팀원별 제출 답안 확인 (화면 전환 기능 추가)
+    st.subheader("📖 팀원의 제출 답안 확인")
+
+    # 팀원 선택
+    team_members = df['name'].unique().tolist()
+    selected_member = st.selectbox("팀원 선택", options=team_members, index=0)
+
+    # 선택된 팀원의 제출 데이터 필터링
+    member_submissions = df[df['name'] == selected_member]
+
+    if not member_submissions.empty:
+        # 📜 제출된 문제 리스트
+        st.markdown(f"### 📝 **{selected_member}님의 제출 목록**")
+        
+        table_data = []
+        for _, row in member_submissions.iterrows():
+            table_data.append({
+                "문제": f'<a href="{row["problem_link"]}" target="_blank">문제 보기</a>',
+                "풀이": f'<a href="{row["solution_link"]}" target="_blank">풀이 보기</a>',
+                "제출일": row["submit_time"]
+            })
+
+        table_df = pd.DataFrame(table_data)
+        st.write(table_df.to_html(escape=False, index=False), unsafe_allow_html=True)
+
+    else:
+        st.info(f"{selected_member}님은 아직 제출한 풀이가 없습니다.")
 
 else:
     st.info("아직 제출된 풀이가 없습니다.")
