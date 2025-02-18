@@ -27,7 +27,7 @@ if submissions:
         st.subheader("📋 전체 문제 제출 현황")
 
         filtered_problems = problems  # 전체 문제 가져오기
-        filtered_submissions = my_submissions  # 모든 제출 데이터 사용
+        filtered_submissions = my_submissions  # 전체 제출 데이터 사용
 
         # 🛠 전체 문제 디버깅
         st.write("📌 전체 문제 리스트:", filtered_problems)
@@ -70,7 +70,7 @@ if submissions:
 
         table_data.append({
             "문제집": f"{prob['set_number']}번째",
-            "문제 이름": prob['task_name'],  # 문제 이름 추가
+            "문제 이름": prob['task_name'],
             "상태": status,
             "문제 링크": f'<a href="{prob_link}" target="_blank">문제 보기</a>',
             "풀이 링크": f'<a href="{submitted_solutions[prob_link]}" target="_blank">풀이 보기</a>' if prob_link in submitted_solutions else "-",
