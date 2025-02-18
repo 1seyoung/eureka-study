@@ -1,6 +1,5 @@
-# utils/auth.py
 import pandas as pd
-from .sheets import get_sheet_data  # .을 추가하여 같은 디렉토리의 모듈임을 명시
+from .sheets import get_sheet_data
 
 def load_users():
     """사용자 데이터 로드"""

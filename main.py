@@ -1,6 +1,5 @@
-# main.py
 import streamlit as st
-from utils.auth import verify_user   
+from utils.auth import verify_user
 
 st.set_page_config(
     page_title="코딩테스트 스터디",
