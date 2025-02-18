@@ -18,7 +18,7 @@ def login_page():
     col1, col2, col3 = st.columns([1, 2, 1])
     
     with col2:
-        st.title("💻 백엔드 코딩테스트 스터디 플랫폼")
+        st.title("백엔드 코딩테스트 스터디 플랫폼")
         
         # card 대신 container 사용
         with st.container():
