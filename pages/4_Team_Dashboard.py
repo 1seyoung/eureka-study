@@ -60,7 +60,7 @@ if submissions:
         pivot_df = daily_counts.pivot(index='name', columns='date', values='count')
 
         # 📊 히트맵 스타일 설정 (빈날짜 연한 회색, 제출 많을수록 초록)
-        fig, ax = plt.subplots(figsize=(15, max(3, len(members) * 0.5)))  # ✅ 크기 조정
+        fig, ax = plt.subplots(figsize=(15, max(3, len(members) * 0.6)))  # ✅ 크기 조정
         sns.heatmap(
             pivot_df,
             cmap=sns.color_palette(["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"]),  # ✅ 깃허브 스타일 색상
@@ -68,7 +68,7 @@ if submissions:
             linecolor="white",
             cbar=False,
             square=True,  # ✅ 네모 정사각형 유지
-            xticklabels=True,  # ✅ 날짜 표시
+            xticklabels=10,  # ✅ 날짜 간격 줄임
             yticklabels=True,  # ✅ 팀원 이름 표시
             ax=ax
         )
