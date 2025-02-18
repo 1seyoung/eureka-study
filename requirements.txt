@@ -6,3 +6,4 @@ google-auth-httplib2==0.2.0
 google-api-python-client==2.118.0
 plotly==5.18.0
 matplotlib
+seaborn==0.13.0
