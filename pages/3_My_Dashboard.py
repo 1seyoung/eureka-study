@@ -27,6 +27,10 @@ if submissions:
         all_problems = problems  # 모든 문제 가져오기
         all_submissions = my_submissions  # 모든 제출 데이터
 
+        # ✅ 제출된 풀이 매핑 (전체 문제 보기에서도 사용)
+        submitted_solutions = dict(zip(all_submissions['problem_link'].str.strip(), 
+                                       all_submissions['solution_link'].str.strip()))
+
         # ✅ 테이블 데이터 생성 (전체 문제 기준)
         table_data = []
         for prob in all_problems:
@@ -38,8 +42,8 @@ if submissions:
                 "문제 이름": prob['task_name'],
                 "상태": status,
                 "문제 링크": f'<a href="{prob_link}" target="_blank">문제 보기</a>',
-                "풀이 링크": "-",
-                "제출일": "-"
+                "풀이 링크": f'<a href="{submitted_solutions[prob_link]}" target="_blank">풀이 보기</a>' if prob_link in submitted_solutions else "-",
+                "제출일": all_submissions[all_submissions['problem_link'].str.strip() == prob_link]['submit_time'].iloc[0] if prob_link in submitted_solutions else "-"
             })
         
         # ✅ 테이블 출력
